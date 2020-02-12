@@ -1,30 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <body>
 
 <?php
-function callAPI($method, $url, $data)
+function curlGet($url)
 {
     $curl = curl_init();
-    switch ($method) {
-        case "POST":
-            curl_setopt($curl, CURLOPT_POST, 1);
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-            break;
-        case "PUT":
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-            if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-            break;
-        default:
-            if ($data)
-                $url = sprintf("%s?%s", $url, http_build_query($data));
-    }
     // OPTIONS:
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'APIKEY: 111111111111111111111',
         'Content-Type: application/json',
     ));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -42,8 +26,8 @@ $origin = "Disneyland";
 $dest = "Universal Studios Hollywood";
 $key = getenv("GOOGLE_API_KEY");
 
-$url ='https://maps.googleapis.com/maps/api/directions/json?origin='.urlencode($origin).'&destination='.urlencode($dest).'&key='.$key;
-$data = callAPI('GET', $url, false);
+$url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' . urlencode($origin) . '&destination=' . urlencode($dest) . '&key=' . $key;
+$data = curlGet($url);
 $decoded_data = json_decode($data);
 echo "<h1>Decoded data with PHP (Geocoded Waypoints)</h1>";
 echo print_r($decoded_data->geocoded_waypoints);
